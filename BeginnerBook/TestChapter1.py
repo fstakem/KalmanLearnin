@@ -23,5 +23,9 @@ class Chapter1Test(unittest.TestCase):
         pass
     
     @log_test(logger, globals.log_separator)
-    def testX(self):
+    def testAvgFilter(self):
+        pass
+    
+    @log_test(logger, globals.log_separator)
+    def testAvgFilterGraphically(self):
         pass
