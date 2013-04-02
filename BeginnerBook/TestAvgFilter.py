@@ -80,9 +80,9 @@ class AvgFilterTest(unittest.TestCase):
         subplot.plot(time, filtered_data, 'ko-')
         subplot.set_xlabel('Time (s)')
         subplot.set_ylabel('Voltage (V)')
+        subplot.set_title('AvgFilterTest: Voltage vs Time')
         
         plt.savefig(AvgFilterTest.graph_file)
-    
     
     def generateRandomSignal(self, size):
         x = []
