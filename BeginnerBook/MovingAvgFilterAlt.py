@@ -13,13 +13,13 @@
 # Libs
 
 # Locals
-import Utilities
+from Utilities import *
 from collections import deque
 
 class MovingAvgFilterAlt(object):
     
     # Class methods/variables
-    Utilities.getLogger('MovingAverageFilterAlt')
+    logger = getLogger('MovingAverageFilterAlt')
     
     def __init__(self, filter_length=10, init_values=[]):
         self.filter_length = filter_length

@@ -13,13 +13,13 @@
 # Libs
 
 # Locals
-import Utilities
+from Utilities import *
 from collections import deque
 
 class MovingAvgFilter(object):
     
     # Class methods/variables
-    Utilities.getLogger('MovingAverageFilter')
+    logger = getLogger('MovingAverageFilter')
     
     def __init__(self, filter_length=10, init_values=[]):
         self.previous_mean = 0

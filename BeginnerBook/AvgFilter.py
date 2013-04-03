@@ -13,12 +13,12 @@
 # Libs
 
 # Locals
-import Utilities
+from Utilities import *
 
 class AvgFilter(object):
     
     # Class methods/variables
-    Utilities.getLogger('AverageFilter')
+    logger = getLogger('AverageFilter')
     
     def __init__(self, init_values=[]):
         self.previous_mean = 0

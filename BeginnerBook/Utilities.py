@@ -42,6 +42,27 @@ def log_test(logger, log_seperators):
         return onCall
     return log
 
+def debug_log(logger, debug_on=False):
+    def debug(func):
+        def onCall(self):
+            if debug_on:
+                logger.debug('Before %s()' % (func.func_name))
+                lines = ( str(self) ).split('\n')
+                for line in lines:
+                    logger.debug('\t%s' % (line))
+                
+            data = func(self)
+            
+            if debug_on:
+                logger.debug('After %s()' % (func.func_name))
+                lines = ( str(self) ).split('\n')
+                for line in lines:
+                    logger.debug('\t%s' % (line))
+                    
+            return data
+        return onCall
+    return debug
+
 def readLinesFromFile(filename):
     f = open(filename, "r")
     lines = f.readlines()
