@@ -27,27 +27,26 @@ class MovingAvgFilter(object):
         buffer_data = [0] * self.filter_length
         self.sample_buffer = deque(buffer_data)
         
-        if len(init_values) > 0:
-            for x in init_values:
-                self.calculateNextMean(x)
+        for x in init_values:
+            self.calculateNextMean(x)
     
-    def __call__(self, x, reset=False, filter_length=10):
-        if reset:
-            self.reset(filter_length)
-            
+    def __call__(self, x):
         return self.calculateNextMean(x)
     
     def __str__(self):
-        pass
+        return 'MovingAvgFilter Previous mean: %f Filter buffer: %s' % (self.previous_mean, str(self.sample_buffer))
     
-    def reset(self, filter_length):
-        self.previous_mean = 0
-        self.filter_length = filter_length
-        buffer_data = [0] * self.filter_length
-        self.sample_buffer = deque(buffer_data)
-        
+    def __repr__(self):
+        return str(self)
+         
     def calculateNextMean(self, x):
-        pass
+        last_x_in_buffer = self.sample_buffer.pop()
+        self.sample_buffer.appendleft(x)
+        mean = self.previous_mean + (x - last_x_in_buffer) / self.filter_length
+        
+        self.previous_mean = mean
+        
+        return mean
     
     
     

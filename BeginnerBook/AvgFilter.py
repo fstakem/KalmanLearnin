@@ -24,18 +24,17 @@ class AvgFilter(object):
         self.previous_mean = 0
         self.num_samples = 0
         
-        if len(init_values) > 0:
-            for x in init_values:
-                self.calculateNextMean(x)
+        for x in init_values:
+            self.calculateNextMean(x)
     
-    def __call__(self, x, reset=False):
-        if reset:
-            self.reset()
-        
+    def __call__(self, x):
         return self.calculateNextMean(x)
     
     def __str__(self):
         return 'AvgFilter Previous mean: %f Number of samples: %d' % (self.previous_mean, self.num_samples)
+    
+    def __repr__(self):
+        return str(self)
     
     def reset(self):
         self.previous_mean = 0
@@ -44,12 +43,12 @@ class AvgFilter(object):
     def calculateNextMean(self, x):
         new_num_samples = self.num_samples + 1
         alpha = (new_num_samples - 1) / float(new_num_samples)
-        average = alpha * self.previous_mean + (1 - alpha) * x
+        mean = alpha * self.previous_mean + (1 - alpha) * x
         
         self.num_samples = new_num_samples
-        self.previous_mean = average
+        self.previous_mean = mean
         
-        return average
+        return mean
     
     
     

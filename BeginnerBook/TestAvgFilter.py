@@ -37,20 +37,7 @@ class AvgFilterTest(unittest.TestCase):
         output = 'Initial data: %s Expected mean: %s Actual mean: %s' % (str(init_data), str(expected_mean), str(mean))
         AvgFilterTest.logger.debug(output)
         assert mean == expected_mean, 'AvgFilter class was incorrectly initialized.'
-    
-    @log_test(logger, globals.log_separator)
-    def testAvgFilterReset(self):
-        init_data = [10, 20, 30, 40, 50]
-        added_value = 15
-        expected_mean = added_value
-        
-        filter = AvgFilter(init_data)
-        mean = filter(added_value, True)
-        
-        output = 'Additional data: %s Expected mean: %s Actual mean: %s' % (str(added_value), str(added_value), str(expected_mean))
-        AvgFilterTest.logger.debug(output)
-        assert mean == expected_mean, 'AvgFilter class was incorrectly reset.'
-    
+     
     @log_test(logger, globals.log_separator)
     def testAvgFilter(self):
         test_data = [10, 20, 30, 40, 50]
