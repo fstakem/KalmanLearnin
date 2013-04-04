@@ -10,6 +10,8 @@
 import unittest
 import random
 import matplotlib.pyplot as plt
+import math
+import numpy
 import Globals as globals
 from Utilities import *
 from MovingAvgFilter import MovingAvgFilter
@@ -18,7 +20,7 @@ class MovingAvgFilterTest(unittest.TestCase):
     
     # Setup logging
     logger = getLogger('MovingAvgFilterTest')
-    #graph_file = '../output/RandomAvgFilter.png'
+    graph_file = '../output/MovingAvgFilter.png'
     
     def setUp(self):
         pass
@@ -29,8 +31,8 @@ class MovingAvgFilterTest(unittest.TestCase):
     @log_test(logger, globals.log_separator)
     def testMovingAvgFilterInit(self):
         init_data = [10, 20, 30, 40, 50]
-        expected_mean = 18
-        filter_length = 8
+        expected_mean = 35
+        filter_length = 4
         
         filter = MovingAvgFilter(filter_length, init_data)
         mean = filter.previous_mean
@@ -42,22 +44,22 @@ class MovingAvgFilterTest(unittest.TestCase):
     @log_test(logger, globals.log_separator)
     def testMovingAvgFilter(self):
         test_data = [10, 20, 30, 40, 50]
-        expected_means = [10, 15, 20, 25, 30]
-        filter = AvgFilter()
+        expected_means = [1, 3, 6, 10, 15]
+        filter = MovingAvgFilter()
         
-        AvgFilterTest.logger.debug('Initial mean: %f' % (filter.previous_mean))
+        MovingAvgFilterTest.logger.debug('Initial mean: %f' % (filter.previous_mean))
         for i, x in enumerate(test_data):
             mean = filter(x)
             output = 'Additional data: %s Expected mean: %s Actual mean: %s' % (str(x), str(expected_means[i]), str(mean))
-            AvgFilterTest.logger.debug(output)
-            assert mean == expected_means[i], 'AvgFilter class filtered incorrectly.'
+            MovingAvgFilterTest.logger.debug(output)
+            assert mean == expected_means[i], 'MovingAvgFilter class filtered incorrectly.'
         
     @log_test(logger, globals.log_separator)
     def testMovingAvgFilterGraphically(self):
-        test_data = self.generateRandomSignal(50)
+        test_data = self.generateSignal(6, 0.1)
         time = range(0, len(test_data) * 10, 10)
         filtered_data = []
-        filter = AvgFilter()
+        filter = MovingAvgFilter()
         
         for x in test_data:
             filtered_data.append( filter(x) )
@@ -70,15 +72,25 @@ class MovingAvgFilterTest(unittest.TestCase):
         subplot.set_ylabel('Voltage (V)')
         subplot.set_title('AvgFilterTest: Voltage vs Time')
         
-        plt.savefig(AvgFilterTest.graph_file)
+        plt.savefig(MovingAvgFilterTest.graph_file)
     
-    def generateRandomSignal(self, size):
-        x = []
+    def generateSignal(self, max_value, step):
+        x = numpy.arange(0, max_value, step)
+        y = []
         
-        for y in range(size):
-            x.append( random.uniform(10, 20) )
+        signal = []
+        for i in x:
+            signal.append(math.sin(i)**2 / 100)
             
-        return x
+        max_num = max(signal)
+        min_num = min(signal)
+        diff = max_num - min_num
+        
+        for i in signal:
+            noise = random.uniform(-diff/2, diff/2)
+            y.append(i + noise / 10 )
+                    
+        return y
         
     
     

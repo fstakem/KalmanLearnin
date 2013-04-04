@@ -24,7 +24,7 @@ class MovingAvgFilter(object):
     def __init__(self, filter_length=10, init_values=[]):
         self.previous_mean = 0
         self.filter_length = filter_length
-        buffer_data = [0] * self.filter_length
+        buffer_data = [0.0] * self.filter_length
         self.sample_buffer = deque(buffer_data)
         
         for x in init_values:
