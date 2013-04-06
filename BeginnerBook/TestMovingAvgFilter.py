@@ -70,7 +70,7 @@ class MovingAvgFilterTest(unittest.TestCase):
         subplot.plot(time, filtered_data, 'ko-')
         subplot.set_xlabel('Time (s)')
         subplot.set_ylabel('Voltage (V)')
-        subplot.set_title('AvgFilterTest: Voltage vs Time')
+        subplot.set_title('MovingAvgFilterTest: Voltage vs Time')
         
         plt.savefig(MovingAvgFilterTest.graph_file)
     
