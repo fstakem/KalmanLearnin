@@ -20,7 +20,8 @@ class MovingAvgFilterTest(unittest.TestCase):
     
     # Setup logging
     logger = getLogger('MovingAvgFilterTest')
-    graph_file = '../output/MovingAvgFilter.png'
+    single_filter_graph_file = '../output/MovingAvgFilterSingle.png'
+    multiple_filter_graph_file = '../output/MovingAvgFilterDouble.png'
     
     def setUp(self):
         pass
@@ -29,7 +30,7 @@ class MovingAvgFilterTest(unittest.TestCase):
         pass
         
     @log_test(logger, globals.log_separator)
-    def testMovingAvgFilterInit(self):
+    def testFilterInit(self):
         init_data = [10, 20, 30, 40, 50]
         expected_mean = 35
         filter_length = 4
@@ -42,7 +43,7 @@ class MovingAvgFilterTest(unittest.TestCase):
         assert mean == expected_mean, 'MovingAvgFilter class was incorrectly initialized.'
      
     @log_test(logger, globals.log_separator)
-    def testMovingAvgFilter(self):
+    def testFilter(self):
         test_data = [10, 20, 30, 40, 50]
         expected_means = [1, 3, 6, 10, 15]
         filter = MovingAvgFilter()
@@ -55,7 +56,7 @@ class MovingAvgFilterTest(unittest.TestCase):
             assert mean == expected_means[i], 'MovingAvgFilter class filtered incorrectly.'
         
     @log_test(logger, globals.log_separator)
-    def testMovingAvgFilterGraphically(self):
+    def testFilterOneCurveCurveGraphically(self):
         test_data = self.generateSignal(6, 0.1)
         time = range(0, len(test_data) * 10, 10)
         filtered_data = []
@@ -72,7 +73,32 @@ class MovingAvgFilterTest(unittest.TestCase):
         subplot.set_ylabel('Voltage (V)')
         subplot.set_title('MovingAvgFilterTest: Voltage vs Time')
         
-        plt.savefig(MovingAvgFilterTest.graph_file)
+        plt.savefig(MovingAvgFilterTest.single_filter_graph_file)
+        
+        
+    @log_test(logger, globals.log_separator)
+    def testFilterTwoCurvesGraphically(self):
+        test_data = self.generateSignal(6, 0.1)
+        time = range(0, len(test_data) * 10, 10)
+        filtered_data_a = []
+        filter_a = MovingAvgFilter()
+        filtered_data_b = []
+        filter_b = MovingAvgFilter(5)
+        
+        for x in test_data:
+            filtered_data_a.append( filter_a(x) )
+            filtered_data_b.append( filter_b(x) )
+            
+        fig = plt.figure()
+        subplot = fig.add_subplot(111)
+        subplot.plot(time, test_data, 'o-')
+        subplot.plot(time, filtered_data_a, 'ko-')
+        subplot.plot(time, filtered_data_b, 'go-')
+        subplot.set_xlabel('Time (s)')
+        subplot.set_ylabel('Voltage (V)')
+        subplot.set_title('MovingAvgFilterTest: Voltage vs Time')
+        
+        plt.savefig(MovingAvgFilterTest.multiple_filter_graph_file)
     
     def generateSignal(self, max_value, step):
         x = numpy.arange(0, max_value, step)
