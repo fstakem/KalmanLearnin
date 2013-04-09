@@ -38,9 +38,9 @@ class LowPassFilter(object):
         return str(self)
          
     def calculateNextEstimate(self, x):
-        self.estimate = self.alpha * self.previous_estimate + (1 - self.alpha) * x
-        
-        return self.estimate
+        self.previous_estimate = self.alpha * self.previous_estimate + (1 - self.alpha) * x
+    
+        return self.previous_estimate
     
     
     

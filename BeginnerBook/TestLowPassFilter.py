@@ -1,8 +1,8 @@
 # ------------------------------------------------------
 #
-#   TestMovingAvgFilterAlt.py
+#   TestLowPassFilter.py
 #   By: Fred Stakem
-#   Created: 4.4.13
+#   Created: 4.8.13
 #
 # ------------------------------------------------------
 
@@ -14,14 +14,14 @@ import math
 import numpy
 import Globals as globals
 from Utilities import *
-from MovingAvgFilterAlt import MovingAvgFilterAlt
+from LowPassFilter import LowPassFilter
 
-class MovingAvgFilterAltTest(unittest.TestCase):
+class LowPassFilterTest(unittest.TestCase):
     
     # Setup logging
     logger = getLogger('MovingAvgFilterAltTest')
-    single_filter_graph_file = '../output/MovingAvgFilterAltSingle.png'
-    multiple_filter_graph_file = '../output/MovingAvgFilterAltDouble.png'
+    single_filter_graph_file = '../output/LowPassFilterSingle.png'
+    multiple_filter_graph_file = '../output/LowPassFilterDouble.png'
     
     def setUp(self):
         pass
@@ -32,35 +32,37 @@ class MovingAvgFilterAltTest(unittest.TestCase):
     @log_test(logger, globals.log_separator)
     def testFilterInit(self):
         init_data = [10, 20, 30, 40, 50]
-        expected_mean = 35
-        filter_length = 4
+        expected_estimate = 13.1
+        alpha = 0.9
         
-        filter = MovingAvgFilterAlt(filter_length, init_data)
-        mean = filter.calculateMean()
+        filter = LowPassFilter(alpha, init_data)
+        estimate = filter.previous_estimate
         
-        output = 'Initial data: %s Expected mean: %s Actual mean: %s' % (str(init_data), str(expected_mean), str(mean))
-        MovingAvgFilterAltTest.logger.debug(output)
-        assert mean == expected_mean, 'MovingAvgFilterAlt class was incorrectly initialized.'
+        output = 'Initial data: %s Expected estimate: %s Actual estimate: %s' % (str(init_data), str(expected_estimate), str(estimate))
+        LowPassFilterTest.logger.debug(output)
+        assert numpy.allclose([estimate], [expected_estimate], 0.1) , 'LowPassFilter class was incorrectly initialized.'
      
     @log_test(logger, globals.log_separator)
     def testFilter(self):
         test_data = [10, 20, 30, 40, 50]
-        expected_means = [1, 3, 6, 10, 15]
-        filter = MovingAvgFilterAlt()
+        expected_estimates = [1.0, 2.9, 5.6, 9.0, 13.1]
+        alpha = 0.9
+        filter = LowPassFilter(alpha)
         
-        MovingAvgFilterAltTest.logger.debug('Initial mean: %f' % (filter.calculateMean()))
+        LowPassFilterTest.logger.debug('Initial estimate: %f' % (filter.previous_estimate))
         for i, x in enumerate(test_data):
-            mean = filter(x)
-            output = 'Additional data: %s Expected mean: %s Actual mean: %s' % (str(x), str(expected_means[i]), str(mean))
-            MovingAvgFilterAltTest.logger.debug(output)
-            assert mean == expected_means[i], 'MovingAvgFilterAlt class filtered incorrectly.'
+            estimate = filter(x)
+            output = 'Additional data: %s Expected estimate: %s Actual estimate: %s' % (str(x), str(expected_estimates[i]), str(estimate))
+            LowPassFilterTest.logger.debug(output)
+            assert numpy.allclose([estimate], [expected_estimates[i]], 0.1) , 'LowPassFilter class filtered incorrectly.'
         
     @log_test(logger, globals.log_separator)
     def testFilterOneCurveCurveGraphically(self):
         test_data = self.generateSignal(6, 0.1)
         time = range(0, len(test_data) * 10, 10)
         filtered_data = []
-        filter = MovingAvgFilterAlt()
+        alpha = 0.8
+        filter = LowPassFilter(alpha)
         
         for x in test_data:
             filtered_data.append( filter(x) )
@@ -71,18 +73,20 @@ class MovingAvgFilterAltTest(unittest.TestCase):
         subplot.plot(time, filtered_data, 'ko-')
         subplot.set_xlabel('Time (s)')
         subplot.set_ylabel('Voltage (V)')
-        subplot.set_title('MovingAvgFilterAltTest: Voltage vs Time')
+        subplot.set_title('LowPassFilterTest: Voltage vs Time')
         
-        plt.savefig(MovingAvgFilterAltTest.single_filter_graph_file)
+        plt.savefig(LowPassFilterTest.single_filter_graph_file)
         
     @log_test(logger, globals.log_separator)
     def testFilterTwoCurvesGraphically(self):
         test_data = self.generateSignal(6, 0.1)
         time = range(0, len(test_data) * 10, 10)
+        alpha_a = 0.9
         filtered_data_a = []
-        filter_a = MovingAvgFilterAlt()
+        filter_a = LowPassFilter(alpha_a)
+        alpha_b = 0.6
         filtered_data_b = []
-        filter_b = MovingAvgFilterAlt(5)
+        filter_b = LowPassFilter(alpha_b)
         
         for x in test_data:
             filtered_data_a.append( filter_a(x) )
@@ -95,9 +99,9 @@ class MovingAvgFilterAltTest(unittest.TestCase):
         subplot.plot(time, filtered_data_b, 'go-')
         subplot.set_xlabel('Time (s)')
         subplot.set_ylabel('Voltage (V)')
-        subplot.set_title('MovingAvgFilterAltTest: Voltage vs Time')
+        subplot.set_title('LowPassFilterTest: Voltage vs Time')
         
-        plt.savefig(MovingAvgFilterAltTest.multiple_filter_graph_file)
+        plt.savefig(LowPassFilterTest.multiple_filter_graph_file)
     
     def generateSignal(self, max_value, step):
         x = numpy.arange(0, max_value, step)
