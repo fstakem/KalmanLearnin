@@ -23,6 +23,9 @@ class SimpleKalmanFilterTest(unittest.TestCase):
     logger = getLogger('SimpleKalmanFilterTest')
     single_filter_graph_file = '../output/SimpleKalmanFilterSingle.png'
     multiple_filter_graph_file = '../output/SimpleKalmanFilterDouble.png'
+    error_graph_file = '../output/SimpleKalmanFilterError.png'
+    kalman_gain_graph_file = '../output/SimpleKalmanFilterGain.png'
+    
     
     def setUp(self):
         pass
@@ -99,6 +102,52 @@ class SimpleKalmanFilterTest(unittest.TestCase):
         subplot.set_title('LowPassFilterTest: Voltage vs Time')
         
         plt.savefig(SimpleKalmanFilterTest.multiple_filter_graph_file)
+        
+    @log_test(logger, globals.log_separator)
+    def testFilterErrorGraphically(self):
+        test_data = self.generateSignal(5, 100)
+        time = range(0, 100, 1)
+        error_data = []
+        init_x = 5.0
+        init_p = 0.35
+        model = SimpleKalmanModel(A=1.0, H=1.0, Q=0.0, R=5.0)
+        filter = SimpleKalmanFilter(model, init_x, init_p)
+        
+        for x in test_data:
+            filter(x)
+            error_data.append(filter.P)
+            
+        fig = plt.figure()
+        subplot = fig.add_subplot(111)
+        subplot.plot(time, error_data, 'ko-')
+        subplot.set_xlabel('Time (s)')
+        subplot.set_ylabel('Error (P)')
+        subplot.set_title('SimpleKalmanFilterTest: Error Covariance vs Time')
+        
+        plt.savefig(SimpleKalmanFilterTest.error_graph_file)
+    
+    @log_test(logger, globals.log_separator)
+    def testFilterGainGraphically(self):
+        test_data = self.generateSignal(5, 100)
+        time = range(0, 100, 1)
+        gain_data = []
+        init_x = 5.0
+        init_p = 0.35
+        model = SimpleKalmanModel(A=1.0, H=1.0, Q=0.0, R=5.0)
+        filter = SimpleKalmanFilter(model, init_x, init_p)
+        
+        for x in test_data:
+            filter(x)
+            gain_data.append(filter.K)
+            
+        fig = plt.figure()
+        subplot = fig.add_subplot(111)
+        subplot.plot(time, gain_data, 'ko-')
+        subplot.set_xlabel('Time (s)')
+        subplot.set_ylabel('Kalman Gain (K)')
+        subplot.set_title('SimpleKalmanFilterTest: Kalman Gain vs Time')
+        
+        plt.savefig(SimpleKalmanFilterTest.kalman_gain_graph_file)
     
     def generateSignal(self, value, num_samples):
         variation = value * 0.1
