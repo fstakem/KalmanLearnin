@@ -1,6 +1,6 @@
 # ------------------------------------------------------
 #
-#   TestSimpleKalmanFilter.py
+#   TestVelocityKalmanFilter.py
 #   By: Fred Stakem
 #   Created: 4.15.13
 #
@@ -14,17 +14,17 @@ import math
 import numpy
 import Globals as globals
 from Utilities import *
-from SimpleKalmanFilter import SimpleKalmanModel
-from SimpleKalmanFilter import SimpleKalmanFilter
+from VelocityKalmanFilter import VelocityKalmanModel
+from VelocityKalmanFilter import VelocityKalmanFilter
 
-class SimpleKalmanFilterTest(unittest.TestCase):
+class VelocityKalmanFilterTest(unittest.TestCase):
     
     # Setup logging
-    logger = getLogger('SimpleKalmanFilterTest')
-    single_filter_graph_file = '../output/SimpleKalmanFilterSingle.png'
-    multiple_filter_graph_file = '../output/SimpleKalmanFilterDouble.png'
-    error_graph_file = '../output/SimpleKalmanFilterError.png'
-    kalman_gain_graph_file = '../output/SimpleKalmanFilterGain.png'
+    logger = getLogger('VelocityKalmanFilterTest')
+    single_filter_graph_file = '../output/VelocityKalmanFilterSingle.png'
+    multiple_filter_graph_file = '../output/VelocityKalmanFilterDouble.png'
+    error_graph_file = '../output/VelocityKalmanFilterError.png'
+    kalman_gain_graph_file = '../output/VelocityKalmanFilterGain.png'
     
     
     def setUp(self):
@@ -39,15 +39,15 @@ class SimpleKalmanFilterTest(unittest.TestCase):
         init_p = 0.35
         test_data = [4.5, 4.8, 5.1, 4.75, 4.4]
         expected_estimates = [4.96, 4.95, 4.96, 4.95, 4.92]
-        model = SimpleKalmanModel(A=1.0, H=1.0, Q=0.0, R=5.0)
-        filter = SimpleKalmanFilter(model, init_x, init_p)
+        model = VelocityKalmanModel(A=1.0, H=1.0, Q=0.0, R=5.0)
+        filter = VelocityKalmanFilter(model, init_x, init_p)
         
-        SimpleKalmanFilterTest.logger.debug('Initial filter:\n%s' % (filter))
+        VelocityKalmanFilterTest.logger.debug('Initial filter:\n%s' % (filter))
         for i, x in enumerate(test_data):
             estimate = filter(x)
             output = 'Additional data: %s Expected estimate: %s Actual estimate: %s' % (str(x), str(expected_estimates[i]), str(estimate))
-            SimpleKalmanFilterTest.logger.debug(output)
-            assert numpy.allclose([estimate], [expected_estimates[i]], 0.1) , 'SimpleKalmanFilter class filtered incorrectly.'
+            VelocityKalmanFilterTest.logger.debug(output)
+            assert numpy.allclose([estimate], [expected_estimates[i]], 0.1) , 'VelocityKalmanFilter class filtered incorrectly.'
         
     @log_test(logger, globals.log_separator)
     def testFilterOneCurveCurveGraphically(self):
@@ -56,8 +56,8 @@ class SimpleKalmanFilterTest(unittest.TestCase):
         filtered_data = []
         init_x = 5.0
         init_p = 0.35
-        model = SimpleKalmanModel(A=1.0, H=1.0, Q=0.0, R=5.0)
-        filter = SimpleKalmanFilter(model, init_x, init_p)
+        model = VelocityKalmanModel(A=1.0, H=1.0, Q=0.0, R=5.0)
+        filter = VelocityKalmanFilter(model, init_x, init_p)
         
         for x in test_data:
             filtered_data.append( filter(x) )
@@ -68,9 +68,9 @@ class SimpleKalmanFilterTest(unittest.TestCase):
         subplot.plot(time, filtered_data, 'ko-')
         subplot.set_xlabel('Time (s)')
         subplot.set_ylabel('Voltage (V)')
-        subplot.set_title('SimpleKalmanFilterTest: Voltage vs Time')
+        subplot.set_title('VelocityKalmanFilterTest: Voltage vs Time')
         
-        plt.savefig(SimpleKalmanFilterTest.single_filter_graph_file)
+        plt.savefig(VelocityKalmanFilterTest.single_filter_graph_file)
         
     @log_test(logger, globals.log_separator)
     def testFilterTwoCurvesGraphically(self):
@@ -79,14 +79,14 @@ class SimpleKalmanFilterTest(unittest.TestCase):
         filtered_data_a = []
         init_x = 5.0
         init_p = 0.35
-        model = SimpleKalmanModel(A=1.0, H=1.0, Q=0.0, R=5.0)
-        filter_a = SimpleKalmanFilter(model, init_x, init_p)
+        model = VelocityKalmanModel(A=1.0, H=1.0, Q=0.0, R=5.0)
+        filter_a = VelocityKalmanFilter(model, init_x, init_p)
     
         filtered_data_b = []
         init_x = 5.5
         init_p = 0.35
-        model = SimpleKalmanModel(A=1.0, H=1.0, Q=0.0, R=6.0)
-        filter_b = SimpleKalmanFilter(model, init_x, init_p)
+        model = VelocityKalmanModel(A=1.0, H=1.0, Q=0.0, R=6.0)
+        filter_b = VelocityKalmanFilter(model, init_x, init_p)
         
         for x in test_data:
             filtered_data_a.append( filter_a(x) )
@@ -99,9 +99,9 @@ class SimpleKalmanFilterTest(unittest.TestCase):
         subplot.plot(time, filtered_data_b, 'go-')
         subplot.set_xlabel('Time (s)')
         subplot.set_ylabel('Voltage (V)')
-        subplot.set_title('SimpleKalmanFilterTest: Voltage vs Time')
+        subplot.set_title('VelocityKalmanFilterTest: Voltage vs Time')
         
-        plt.savefig(SimpleKalmanFilterTest.multiple_filter_graph_file)
+        plt.savefig(VelocityKalmanFilterTest.multiple_filter_graph_file)
         
     @log_test(logger, globals.log_separator)
     def testFilterErrorGraphically(self):
@@ -110,8 +110,8 @@ class SimpleKalmanFilterTest(unittest.TestCase):
         error_data = []
         init_x = 5.0
         init_p = 0.35
-        model = SimpleKalmanModel(A=1.0, H=1.0, Q=0.0, R=5.0)
-        filter = SimpleKalmanFilter(model, init_x, init_p)
+        model = VelocityKalmanModel(A=1.0, H=1.0, Q=0.0, R=5.0)
+        filter = VelocityKalmanFilter(model, init_x, init_p)
         
         for x in test_data:
             filter(x)
@@ -122,9 +122,9 @@ class SimpleKalmanFilterTest(unittest.TestCase):
         subplot.plot(time, error_data, 'ko-')
         subplot.set_xlabel('Time (s)')
         subplot.set_ylabel('Error (P)')
-        subplot.set_title('SimpleKalmanFilterTest: Error Covariance vs Time')
+        subplot.set_title('VelocityKalmanFilterTest: Error Covariance vs Time')
         
-        plt.savefig(SimpleKalmanFilterTest.error_graph_file)
+        plt.savefig(VelocityKalmanFilterTest.error_graph_file)
     
     @log_test(logger, globals.log_separator)
     def testFilterGainGraphically(self):
@@ -133,8 +133,8 @@ class SimpleKalmanFilterTest(unittest.TestCase):
         gain_data = []
         init_x = 5.0
         init_p = 0.35
-        model = SimpleKalmanModel(A=1.0, H=1.0, Q=0.0, R=5.0)
-        filter = SimpleKalmanFilter(model, init_x, init_p)
+        model = VelocityKalmanModel(A=1.0, H=1.0, Q=0.0, R=5.0)
+        filter = VelocityKalmanFilter(model, init_x, init_p)
         
         for x in test_data:
             filter(x)
@@ -145,9 +145,9 @@ class SimpleKalmanFilterTest(unittest.TestCase):
         subplot.plot(time, gain_data, 'ko-')
         subplot.set_xlabel('Time (s)')
         subplot.set_ylabel('Kalman Gain (K)')
-        subplot.set_title('SimpleKalmanFilterTest: Kalman Gain vs Time')
+        subplot.set_title('VelocityKalmanFilterTest: Kalman Gain vs Time')
         
-        plt.savefig(SimpleKalmanFilterTest.kalman_gain_graph_file)
+        plt.savefig(VelocityKalmanFilterTest.kalman_gain_graph_file)
     
     def generateSignal(self, value, num_samples):
         variation = value * 0.1
